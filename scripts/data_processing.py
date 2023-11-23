@@ -8,15 +8,18 @@ region_name = 'eu-central-1'
 session = boto3.Session(profile_name=profile_name, region_name=region_name)
 
 def encode_csv_to_unicode(file_path):
-    # Read the CSV file into a pandas DataFrame
-    df = pd.read_csv(file_path, encoding='ISO-8859-1')
  
-    # Encode the data to Unicode
-    df_encoded = df.select_dtypes(include=['object']).applymap(lambda x: x.encode('utf-8').decode('unicode_escape'))
+    # Read the CSV file into a pandas DataFrame
+    df = pd.read_csv(file_path, encoding='latin-1', delimiter='\t')
+      # Add a new column with the file path
+
+    # Add new column to the csv
+    df['Year'] = year, month 
+    df['month'] = month
 
     # Save the encoded DataFrame to a new CSV file
     encoded_file_path = 'encoded_file.csv'
-    df_encoded.to_csv(encoded_file_path, index=False)
+    df.to_csv(encoded_file_path, sep='\t', index=False)
     
     return encoded_file_path
 
@@ -51,4 +54,3 @@ for year in range(2016, 2024):
             upload_file_to_s3(bucket_name, encoded_file_path, s3_key, kms_key_arn)
         else:
             print(f"File does not exist: {file_path}")
-
