@@ -8,18 +8,18 @@ region_name = 'eu-central-1'
 session = boto3.Session(profile_name=profile_name, region_name=region_name)
 
 def encode_csv_to_unicode(file_path):
- 
+    
     # Read the CSV file into a pandas DataFrame
-    df = pd.read_csv(file_path, encoding='latin-1', delimiter='\t')
+    df = pd.read_csv(file_path, encoding='latin-1')
       # Add a new column with the file path
 
     # Add new column to the csv
-    df['Year'] = year, month 
+    df['Year'] = year 
     df['month'] = month
 
     # Save the encoded DataFrame to a new CSV file
     encoded_file_path = 'encoded_file.csv'
-    df.to_csv(encoded_file_path, sep='\t', index=False)
+    df.to_csv(encoded_file_path, index=False)
     
     return encoded_file_path
 
