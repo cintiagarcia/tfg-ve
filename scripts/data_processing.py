@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import boto3
 
-profile_name = 'tfg-ve'
+profile_name = 'default'
 region_name = 'eu-central-1'
 
 session = boto3.Session(profile_name=profile_name, region_name=region_name)
@@ -15,7 +15,7 @@ def encode_csv_to_unicode(file_path):
 
     # Add new column to the csv
     df['Year'] = year 
-    df['month'] = month
+    df['month'] = str(month).zfill(2)
 
     # Save the encoded DataFrame to a new CSV file
     encoded_file_path = 'encoded_file.csv'
@@ -40,7 +40,7 @@ kms_key_arn = 'arn:aws:kms:eu-central-1:766973746059:key/4ae649c9-0b3f-4080-8344
 for year in range(2016, 2024):
     for month in range(1, 13):
         # Generate the file path based on the directory structure
-        file_path = f"/Users/I559673/Documents/Informatica/tfg_ve/data/{year}/{month}/InformePredefinido_Parque{year}{month}.csv"
+        file_path = f"/Users/I559673/Documents/Informatica/tfg_ve/data/{year}/{str(month).zfill(2)}/InformePredefinido_Parque{year}{str(month).zfill(2)}.csv"
         
         # Check if the file exists
         if os.path.exists(file_path):
@@ -48,7 +48,7 @@ for year in range(2016, 2024):
             encoded_file_path = encode_csv_to_unicode(file_path)
             
             # Generate the S3 key based on the directory structure
-            s3_key = f"{s3_key_prefix}{year}/{month:}/informe_VE_{year}_{month}.csv"
+            s3_key = f"{s3_key_prefix}{year}/{str(month).zfill(2)}/informe_VE_{year}_{str(month).zfill(2)}.csv"
             
             # Step 2: Upload the encoded file to AWS S3
             upload_file_to_s3(bucket_name, encoded_file_path, s3_key, kms_key_arn)
