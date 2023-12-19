@@ -5,17 +5,18 @@ import s3fs
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+from st_files_connection import FilesConnection
 
 def app():
     # Cargar los datos desde el S3 bucket
     bucket_name = "clean-data-ve-eu-central-1"
 
-    def read_data_from_s3(bucket_name):
-        aws_credentials = st.secrets["aws_credentials"]
+    def read_data_from_s3(bucket_name, conn):
+        # aws_credentials = st.secrets["aws_credentials"]
         # Create an S3 file system object
         fs = s3fs.S3FileSystem(
-            key=aws_credentials["aws_access_key_id"],
-            secret=aws_credentials["aws_secret_access_key"]
+            # key=aws_credentials["aws_access_key_id"],
+            # secret=aws_credentials["aws_secret_access_key"]
         )
 
         file_paths = fs.glob(f"{bucket_name}/*")
@@ -33,8 +34,9 @@ def app():
 
         return df
 
+    conn = st.connection('s3', type=FilesConnection)
     # Cargar los datos
-    df = read_data_from_s3(bucket_name)
+    df = read_data_from_s3(bucket_name, conn)
 
     def predecir_ventas_coches_electricos(df,selected_years):
         # Calcular las ventas anuales sumando el total de coches eléctricos por cada año
