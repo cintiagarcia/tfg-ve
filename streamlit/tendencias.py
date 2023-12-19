@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import s3fs
-from st_files_connection import FilesConnection
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go

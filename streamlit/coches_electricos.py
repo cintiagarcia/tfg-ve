@@ -1,6 +1,5 @@
 import pandas as pd
 import s3fs
-from st_files_connection import FilesConnection
 import matplotlib.pyplot as plt
 import streamlit as st
 import plotly.express as px
