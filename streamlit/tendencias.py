@@ -11,7 +11,7 @@ def app():
     # Cargar los datos desde el S3 bucket
     bucket_name = "clean-data-ve-eu-central-1"
 
-    def read_data_from_s3(bucket_name):
+    def read_data_from_s3(bucket_name, conn):
         # Create an S3 file system object
         fs = s3fs.S3FileSystem()
 
