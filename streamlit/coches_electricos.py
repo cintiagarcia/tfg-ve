@@ -1,5 +1,6 @@
 import pandas as pd
 import s3fs
+from st_files_connection import FilesConnection
 import matplotlib.pyplot as plt
 import streamlit as st
 import plotly.express as px
@@ -157,13 +158,12 @@ def app():
         return fig
 
 
-    # Ejemplo de uso
-    dataframe = pd.DataFrame({
-        'comunidad_autonoma': ['A', 'A', 'B', 'B', 'C', 'C'],
-        'total_coches': [10, 20, 30, 40, 50, 60],
-        'año': [2020, 2021, 2020, 2021, 2020, 2021]
-    })
+    # # Ejemplo de uso
+    # dataframe = pd.DataFrame({
+    #     'comunidad_autonoma': ['A', 'A', 'B', 'B', 'C', 'C'],
+    #     'total_coches': [10, 20, 30, 40, 50, 60],
+    #     'año': [2020, 2021, 2020, 2021, 2020, 2021]
+    # })
 
     sales_by_region_chart = generate_sales_by_region_cum_chart(df)
     st.plotly_chart(sales_by_region_chart, use_container_width=True)
-
