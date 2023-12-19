@@ -12,8 +12,12 @@ def app():
     bucket_name = "clean-data-ve-eu-central-1"
 
     def read_data_from_s3(bucket_name, conn):
+        aws_credentials = st.secrets["aws_credentials"]
         # Create an S3 file system object
-        fs = s3fs.S3FileSystem()
+        fs = s3fs.S3FileSystem(
+            key=aws_credentials["aws_access_key_id"],
+            secret=aws_credentials["aws_secret_access_key"]
+        )
 
         file_paths = fs.glob(f"{bucket_name}/*")
         
