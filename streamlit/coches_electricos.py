@@ -3,6 +3,7 @@ import s3fs
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+from st_files_connection import FilesConnection
 
 
 def app():
@@ -28,7 +29,7 @@ def app():
 
         return df
 
-
+    conn = st.connection('s3', type=FilesConnection)
 
     def generate_yearly_sales_chart(df):
 
@@ -76,7 +77,7 @@ def app():
 
 
     # Leer los datos desde S3
-    df = read_data_from_s3(bucket_name)
+    df = read_data_from_s3(bucket_name, conn)
 
     st.markdown('---')
 
