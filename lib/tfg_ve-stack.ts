@@ -4,8 +4,6 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import {aws_kms as kms} from 'aws-cdk-lib';
 import {aws_iam as iam} from 'aws-cdk-lib';
 import {aws_glue as glue} from 'aws-cdk-lib';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-
 
 
 export class TfgVeStack extends cdk.Stack {

@@ -10,12 +10,12 @@ def app():
     # List all objects in the bucket
     bucket_name = "clean-data-ve-eu-central-1"
 
-    def read_data_from_s3(bucket_name):
+    def read_data_from_s3(bucket_name, conn):
         # Create an S3 file system object
         fs = s3fs.S3FileSystem()
-
         file_paths = fs.glob(f"{bucket_name}/*")
         
+
         # Read the objects and process the data
         data_frames = []
         for file_path in file_paths:
@@ -28,8 +28,6 @@ def app():
         df = pd.concat(data_frames)
 
         return df
-
-    conn = st.connection('s3', type=FilesConnection)
 
     def generate_yearly_sales_chart(df):
 
@@ -75,7 +73,7 @@ def app():
 
         return fig
 
-
+    conn = st.connection('s3', type=FilesConnection)
     # Leer los datos desde S3
     df = read_data_from_s3(bucket_name, conn)
 
