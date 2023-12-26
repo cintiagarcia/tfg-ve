@@ -18,7 +18,7 @@ class Multiapp:
             'function': func
         })    
 
-    def run():
+    def run(self):
         with st.sidebar:
             app = option_menu(
                 menu_title='Main Menu',
@@ -27,9 +27,24 @@ class Multiapp:
                 menu_icon='cast',
             )
 
-        if app == "Datos Históricos":
+        if app == "Home":
+            self.show_home()
+        elif app == "Datos Históricos":
             coches_electricos.app()   
-        if app == 'Tendencias':
-            tendencias.app()        
+        elif app == 'Tendencias':
+            tendencias.app()       
 
-    run()
+    def show_home(self):
+        # Puedes personalizar el contenido de la aplicación "Home"
+        st.title('Bienvenido al Home')
+        st.write('Este es el contenido de la aplicación Home.')
+
+# Crear una instancia de Multiapp
+multiapp = Multiapp()
+
+# Añadir las aplicaciones
+multiapp.add_app('Datos Históricos', coches_electricos.app)
+multiapp.add_app('Tendencias', tendencias.app)
+
+# Ejecutar la aplicación seleccionada
+multiapp.run()
