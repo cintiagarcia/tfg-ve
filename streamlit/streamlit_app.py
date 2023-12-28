@@ -20,8 +20,8 @@ def do_presentation():
 
         st.write('Gracias por visitar mi trabajo fin de grado. ¡Espero que disfrutes explorando los detalles de mi investigación!')
 
-        logo_path = "streamlit/logo-udima.png"
-        st.image(logo_path, caption='Logo de la Universidad a Distancia de Madrid', width=200)
+        # logo_path = "streamlit/logo-udima.png"
+        # st.image(logo_path, caption='Logo de la Universidad a Distancia de Madrid', width=200)
 
 def do_coches_electricos():
     coches_electricos.app()   
@@ -29,11 +29,12 @@ def do_coches_electricos():
 def do_tendencias():
     tendencias.app()
 
+
 styles = {
-    "container": {"margin": "0px !important", "padding": "0!important", "align-items": "stretch", "background-color": "#fafafa"},
-    "icon": {"color": "black", "font-size": "20px"}, 
-    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-    "nav-link-selected": {"background-color": "lightblue", "font-size": "20px", "font-weight": "normal", "color": "black", },
+    "container": {"margin": "0px !important", "padding": "0!important", "align-items": "stretch", "font-family": "Futura, Sans-serif"},
+    "icon": {"font-size": "20px", "font-family": "Futura, sans-serif"}, 
+    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "font-family": "Futura, sans-serif"},
+    "nav-link-selected": {"background-color": "lightblue", "font-size": "20px", "font-weight": "normal", "color": "black", "font-family": "Futura, sans-serif"},
 }
 
 menu = {
@@ -81,6 +82,7 @@ menu = {
             }
         }
     },
+
     'menu_icon': 'plugin',
     'default_index': 0,
     'with_view_panel': 'sidebar',
@@ -111,6 +113,8 @@ def show_menu(menu):
     if with_view_panel == 'sidebar':
         with st.sidebar:
             menu_selection = option_menu(**kwargs)
+            st.markdown('___')
+
     elif with_view_panel == 'main':
         menu_selection = option_menu(**kwargs)
     else:
