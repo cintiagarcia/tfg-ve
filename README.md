@@ -13,3 +13,5 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `cdk diff`        compare deployed stack with current state
 * `cdk synth`       emits the synthesized CloudFormation template
 * `cdk deploy --profile tfg-ve`   deploy stack in AWS account/region in profile
+
+* Web link: https://cintiagarcia-tfg-ve-streamlitstreamlit-app-fqypjr.streamlit.app/
