@@ -20,7 +20,7 @@ def do_presentation():
 
         st.write('Gracias por visitar mi trabajo fin de grado. ¡Espero que disfrutes explorando los detalles de mi investigación!')
 
-        logo_path = "/Users/I559673/Documents/Informatica/tfg_ve/streamlit/logo-udima.png"
+        logo_path = "streamlit/logo-udima.png"
         st.image(logo_path, caption='Logo de la Universidad a Distancia de Madrid', width=200)
 
 def do_coches_electricos():
@@ -123,3 +123,4 @@ def show_menu(menu):
         menu['items'][menu_selection]['action']()
 
 show_menu(menu)
+
