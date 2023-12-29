@@ -2,7 +2,6 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 import coches_electricos, tendencias
 
-
 st.set_page_config(page_title='VE Price Prediction App', layout='wide')
 
 def image(url, width=None, height=None):
@@ -13,7 +12,7 @@ def link(url, text):
 
 
 footer = """
-   <div style="background-color: #f1f1f1; padding: 10px; position: fixed; bottom: 0; width: 100%; text-align: center;">
+   <div style="padding: 10px; position: fixed; bottom: 0; width: 100%; text-align: center;">
         Made in {0} with ❤️ by {1} 
     </div>
     """.format(image('https://avatars3.githubusercontent.com/u/45109972?s=400&v=4', width=25, height=25),
@@ -39,7 +38,7 @@ def do_presentation():
         st.markdown('___')
 
         logo_path = "streamlit/logo-udima.png"
-        st.image(logo_path, caption='Logo de la Universidad a Distancia de Madrid', width=200)
+        st.image(logo_path, caption='Universidad a Distancia de Madrid', width=200)
 
 
 def do_coches_electricos():
@@ -49,20 +48,18 @@ def do_tendencias():
     tendencias.app()
 
 def display_linkedin_icon():
-    linkedin_icon = "streamlit/icon-link.png"
+    linkedin_icon = "https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg"
     linkedin_url = "https://www.linkedin.com/in/cintia-garcia-garces/"
 
-    st.sidebar.markdown('<div style="flex: 1;"></div>', unsafe_allow_html=True)
-
-    st.sidebar.markdown(f'<a href="{linkedin_url}" target="_blank"><img src="{linkedin_icon}" alt="LinkedIn" style="width: 30px; height: 30px;"></a>', unsafe_allow_html=True)
+    image_html = f'<a href="{linkedin_url}" target="_blank"><img src="{linkedin_icon}" alt="Imagen" style="width: 24px;"></a>'
+    st.markdown(image_html, unsafe_allow_html=True)
 
 def display_github_icon():
-    github_icon = "streamlit/gitHub-icon.png"
+    github_icon = "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png"
     github_url = "https://github.com/cintiagarcia"
 
-    st.sidebar.markdown('<div style="flex: 1;"></div>', unsafe_allow_html=True)
-
-    st.sidebar.markdown(f'<a href="{github_url}" target="_blank"><img src="{github_icon}" alt="LinkedIn" style="width: 30px; height: 30px;"></a>', unsafe_allow_html=True)
+    image_html = f'<a href="{github_url}" target="_blank"><img src="{github_icon}" alt="Imagen" style="width: 24px;"></a>'
+    st.markdown(image_html, unsafe_allow_html=True)
 
 def display_my_website_link():
     web_url = "https://www.cintiagarciagarces.com/"
@@ -152,10 +149,13 @@ def show_menu(menu):
     if with_view_panel == 'sidebar':
         with st.sidebar:
             menu_selection = option_menu(**kwargs)
-            st.markdown('___')
 
+            st.markdown('&nbsp;' * 5)
+            st.markdown('___')
             display_my_website_link()
+
             display_linkedin_icon()
+            st.empty()
             display_github_icon()
 
             st.markdown(footer, unsafe_allow_html=True)
