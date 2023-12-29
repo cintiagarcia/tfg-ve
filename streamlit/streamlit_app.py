@@ -37,8 +37,8 @@ def do_presentation():
 
         st.markdown('___')
 
-        logo_path = "streamlit/logo-udima.png"
-        st.image(logo_path, caption='Universidad a Distancia de Madrid', width=200)
+        # logo_path = "streamlit/logo-udima.png"
+        # st.image(logo_path, caption='Universidad a Distancia de Madrid', width=200)
 
 
 def do_coches_electricos():
@@ -158,10 +158,6 @@ def show_menu(menu):
             st.empty()
             display_github_icon()
 
-            st.markdown(footer, unsafe_allow_html=True)
-
-
-
     elif with_view_panel == 'main':
         menu_selection = option_menu(**kwargs)
     else:
@@ -173,6 +169,7 @@ def show_menu(menu):
     if menu['items'][menu_selection]['action']:
         menu['items'][menu_selection]['action']()
 
+    st.markdown(footer, unsafe_allow_html=True)
 
 
 show_menu(menu)
