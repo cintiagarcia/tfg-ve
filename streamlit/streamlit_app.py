@@ -18,8 +18,7 @@ footer = """
     </div>
     """.format(image('https://avatars3.githubusercontent.com/u/45109972?s=400&v=4', width=25, height=25),
             link("https://www.cintiagarciagarces.com/", "@CintiaGarciaGarces"),
-            )
-    
+        )  
 
 
 def do_presentation():
@@ -37,7 +36,9 @@ def do_presentation():
 
         st.write('Gracias por visitar mi trabajo fin de grado. ¡Espero que disfrutes explorando los detalles de mi investigación!')
 
-        logo_path = "streamlit/content/logo-udima.png"
+        st.markdown('___')
+
+        logo_path = "/content/logo-udima.png"
         st.image(logo_path, caption='Logo de la Universidad a Distancia de Madrid', width=200)
 
 
@@ -48,7 +49,7 @@ def do_tendencias():
     tendencias.app()
 
 def display_linkedin_icon():
-    linkedin_icon = "streamlit/content/icon-link.png"
+    linkedin_icon = "/content/icon-link.png"
     linkedin_url = "https://www.linkedin.com/in/cintia-garcia-garces/"
 
     st.sidebar.markdown('<div style="flex: 1;"></div>', unsafe_allow_html=True)
@@ -56,7 +57,7 @@ def display_linkedin_icon():
     st.sidebar.markdown(f'<a href="{linkedin_url}" target="_blank"><img src="{linkedin_icon}" alt="LinkedIn" style="width: 30px; height: 30px;"></a>', unsafe_allow_html=True)
 
 def display_github_icon():
-    github_icon = "streamlit/content/GitHub.png"
+    github_icon = "/content/gitHub-icon.png"
     github_url = "https://github.com/cintiagarcia"
 
     st.sidebar.markdown('<div style="flex: 1;"></div>', unsafe_allow_html=True)
