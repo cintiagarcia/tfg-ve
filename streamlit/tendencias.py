@@ -40,7 +40,6 @@ def app():
     conn = st.connection('s3', type=FilesConnection)
     # Cargar los datos
     df = read_data_from_s3(bucket_name, conn)
-
     
     def predecir_ventas_con_prophet(df, selected_years):
         df_grouped = df.groupby(['año', 'mes'], as_index=False)['total_coches'].sum().reset_index()
@@ -77,18 +76,67 @@ def app():
 
         return fig, forecast
 
+    st.markdown('---')
     st.title('Predicción ventas de coches eléctricos')
     selected_years = st.slider('Selecciona los años futuros', 1, 11, 5)
     fig, df_forecast = predecir_ventas_con_prophet(df, selected_years)
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # Crear el DataFrame con las predicciones
     df_forecast = df_forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
     df_forecast.rename(columns={'ds': 'Fecha', 'yhat': 'Predicciones', 'yhat_lower': 'Límite inferior', 'yhat_upper': 'Límite superior'}, inplace=True)
-    st.subheader('Predicciones de Ventas con Prophet')
+    st.subheader('Predicciones de Ventas')
     st.dataframe(df_forecast)
+    st.markdown('---')
 
+    def predecir_ventas_con_prophet_por_comunidad(df, selected_years, selected_comunidad):
+        df_filtered = df[df['comunidad_autonoma'] == selected_comunidad]
+
+        df_grouped = df_filtered.groupby(['año', 'mes'], as_index=False)['total_coches'].sum().reset_index()
+        df_grouped['ds'] = pd.to_datetime(df_grouped['año'].astype(str) + '-' + df_grouped['mes'].astype(str) + '-01')
+        df_grouped.rename(columns={'total_coches': 'y'}, inplace=True)
+
+        df_prophet = df_grouped[['ds', 'y']]
+
+        model = Prophet()
+        
+        model.fit(df_prophet)
+
+        future_dates = pd.date_range(start=df_prophet['ds'].max(), periods=selected_years * 12, freq='M')
+        future_df = pd.DataFrame({'ds': future_dates})
+
+        forecast = model.predict(future_df)
+
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(x=df_prophet['ds'], y=df_prophet['y'], mode='lines', name='Ventas Históricas'))
+
+        fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicciones'))
+        fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat_lower'], name='Límite inferior', line=dict(color='red')))
+        fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat_upper'], name='Límite superior', line=dict(color='red')))
+
+        fig.update_layout(
+            title=f'Predicción de ventas para {selected_comunidad}',
+            xaxis=dict(title='Fecha'),
+            yaxis=dict(title='Ventas')
+        )
+
+        return fig, forecast
+
+    st.title('Predicción ventas de coches eléctricos por Comunidad Autónoma')
+
+    comunidades_autonomas = df['comunidad_autonoma'].unique()
+    selected_comunidad = st.selectbox('Selecciona una Comunidad Autónoma', comunidades_autonomas)
+
+    selected_years = st.slider(f'Selecciona los años futuros para {selected_comunidad}', 1, 11, 5)
+
+    fig, df_forecast = predecir_ventas_con_prophet_por_comunidad(df, selected_years, selected_comunidad)
+    st.plotly_chart(fig, use_container_width=True)
+
+    df_forecast = df_forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+    df_forecast.rename(columns={'ds': 'Fecha', 'yhat': 'Predicciones', 'yhat_lower': 'Límite inferior', 'yhat_upper': 'Límite superior'}, inplace=True)
+    st.subheader('Predicciones de Ventas')
+    st.dataframe(df_forecast)
 
     def predecir_ventas_coches_electricos(df, selected_years):
         df_anual = df.groupby('año')['total_coches'].sum().reset_index()
@@ -122,7 +170,8 @@ def app():
             yaxis=dict(title='Ventas de Coches Eléctricos')
         )
         return fig
-
+    
+    
 
     def predecir_ventas_coches_por_comunidad(df, selected_years_comunidad):
         df_anual = df.groupby(['comunidad_autonoma', 'año'])['total_coches'].sum().reset_index()
@@ -182,7 +231,6 @@ def app():
             )
         return fig
 
-
     st.markdown('---')
 
     col1, col2 = st.columns((5,5))
@@ -193,7 +241,7 @@ def app():
         predecir_ventas_coches = predecir_ventas_coches_electricos(df,selected_years)
         st.plotly_chart(predecir_ventas_coches, use_container_width=True)
     with col2:
-        st.header("Predicción de ventas de coches eléctricos por Comunidad Autónoma")
+        st.header("Predicción de ventas anuales de coches eléctricos por Comunidad Autónoma")
         selected_years_comunidad = st.slider('Selecciona los años', df['año'].min(), df['año'].max() + 11, (df['año'].min(), df['año'].max()),key='coches_electricos_comunidad')
         predecir_ventas_coches_comunidad = predecir_ventas_coches_por_comunidad(df, selected_years_comunidad)
         st.plotly_chart(predecir_ventas_coches_comunidad, use_container_width=True)
