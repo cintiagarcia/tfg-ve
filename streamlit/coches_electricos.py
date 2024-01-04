@@ -4,6 +4,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from st_files_connection import FilesConnection
+import numpy as np
 
 
 def app():
@@ -46,79 +47,91 @@ def app():
 
         return fig
     
-    
     def show_sales_kpi(df):
-        total_ventas = df.groupby('año')['total_coches'].sum().reset_index()
+        total_sales = df.groupby('año')['total_coches'].sum().reset_index()
 
-        fig = px.pie(total_ventas, values='total_coches', names='año', title='Distribución de ventas de coches eléctricos por año')
-        fig.update_traces(textinfo='percent+label', pull=[0.1] * len(total_ventas))
+        fig = px.pie(total_sales, values='total_coches', names='año', title='Distribución de ventas de coches eléctricos por año en España')
+        fig.update_traces(textinfo='percent+label', pull=[0.1] * len(total_sales))
 
         return fig
 
     def generate_sales_by_region_chart(df):
-        años_unicos = df["año"].unique()
+        unique_years = df["año"].unique()
 
-        año_seleccionado = st.selectbox("Selecciona el año", años_unicos, key="sales_by_region_year")
+        selected_year = st.selectbox("Selecciona el año", unique_years, key="sales_by_region_year")
 
-        filtrado = df[df["año"] == año_seleccionado]  
+        filter = df[df["año"] == selected_year]  
 
-        acumulado_por_comunidad = filtrado.groupby('comunidad_autonoma')['total_coches'].sum().reset_index()
+        accumulated_per_region = filter.groupby('comunidad_autonoma')['total_coches'].sum().reset_index()
 
-        fig = px.bar(acumulado_por_comunidad, x='comunidad_autonoma', y='total_coches', title='Venta anual de coches por Comunidad Autónoma')
+        fig = px.bar(accumulated_per_region, x='comunidad_autonoma', y='total_coches', title='Venta anual de coches por Comunidad Autónoma')
         fig.update_xaxes(title='Comunidad Autónoma')
         fig.update_yaxes(title='Total de Coches')
 
         return fig
     
     def show_sales_by_region_kpi(df):
-        años_unicos = df["año"].unique()
+        unique_years = df["año"].unique()
 
-        año_seleccionado = st.selectbox("Selecciona el año", años_unicos, key="sales_by_region_year_kpi")
+        selected_year = st.selectbox("Selecciona el año", unique_years, key="sales_by_region_year_kpi")
 
-        filtrado = df[df["año"] == año_seleccionado]  
+        filtrado = df[df["año"] == selected_year]  
 
-        acumulado_por_comunidad = filtrado.groupby('comunidad_autonoma')['total_coches'].sum().reset_index()
+        accumulated_per_region = filtrado.groupby('comunidad_autonoma')['total_coches'].sum().reset_index()
 
         fig = px.pie(
-            acumulado_por_comunidad,
+            accumulated_per_region,
             values='total_coches',
             names='comunidad_autonoma',
-            title='Venta anual de coches por Comunidad Autónoma'
+            title='Distribución de ventas de coches eléctricos por Comunidad Autónoma'
         )
-        fig.update_traces(textinfo='percent+label', pull=[0.1] * len(acumulado_por_comunidad))
+        fig.update_traces(textinfo='percent+label', pull=[0.1] * len(accumulated_per_region))
 
         return fig
 
-    conn = st.connection('s3', type=FilesConnection)
+    def show_kpis(df):
+        total_sales = int(df['total_coches'].sum())
+        total_sales_by_year = df.groupby('año')['total_coches'].sum()
 
-    df = read_data_from_s3(bucket_name, conn)
+        annual_variation = total_sales_by_year.pct_change() * 100
+        annual_variation = annual_variation.replace([np.inf, -np.inf, np.nan], 0)
 
-    st.markdown('---')
+        with st.container():
+            col1, col2 = st.columns((2, 6))
+            with col1:
+                st.markdown('''
+                <div style="border: 2px solid #45a7c8; padding: 10px">
+                    <h3 style="text-align: center">Total de ventas</h3>
+                    <p style="text-align: center; font-size: 24px"><strong>{}</strong></p>
+                    <br>
+                </div>
+                '''.format('{:,}'.format(total_sales)), unsafe_allow_html=True)
 
-    
-    col1, col2 = st.columns((5,5))
-    with col1:
-        st.header("Ventas Anuales")
-        total_sales_kpi = show_sales_kpi(df)
-        st.plotly_chart(total_sales_kpi, use_container_width=True)
-    with col2:
-        st.header("Ventas Anuales")
-        yearly_sales_chart = generate_yearly_sales_chart(df)
-        st.plotly_chart(yearly_sales_chart, use_container_width=True)
-
-    st.markdown('---')
-
-    col1, col2 = st.columns((5,5))
-    with col1:
-        st.header("Ventas Anuales")
-        yearly_sales_kpi = show_sales_by_region_kpi(df)
-        st.plotly_chart(yearly_sales_kpi, use_container_width=True)
-    with col2:
-        st.header("Ventas por Comunidad Autónoma")
-        sales_by_region_chart = generate_sales_by_region_chart(df)
-        st.plotly_chart(sales_by_region_chart, use_container_width=True)
-
-    st.markdown('---')
+            with col2:
+                st.markdown('''
+                <div style="border: 2px solid #45a7c8; padding: 10px">
+                    <h3 style="text-align: center">Porcentaje de Variación Anual</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="margin-left: auto; margin-right: auto;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    {}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align: center">Porcentaje de Variación</td>
+                                    {}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                '''.format(
+                    ''.join('<th>{}</th>'.format(año) for año in total_sales_by_year.index),
+                    ''.join('<td style="text-align: center">{:.2f}%</td>'.format(variación) for variación in annual_variation),
+                ), unsafe_allow_html=True)
 
     def generate_yearly_sales_cum_chart(df):
         df['fecha'] = pd.to_datetime(df['año'].astype(str) + '-' + df['mes'].astype(str))
@@ -130,11 +143,51 @@ def app():
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=df['fecha'], y=df['acumulado'], mode='lines', name='Acumulado de Ventas', line_shape='spline'))
 
+        st.header("Número Total de Coches Eléctricos")
+
         fig.update_layout(title='Número de coches eléctricos en circulación en España por Mes',
                         xaxis_title='Fecha',
                         yaxis_title='Número de Coches Eléctricos')
 
         return fig
+    
+    conn = st.connection('s3', type=FilesConnection)
+
+    df = read_data_from_s3(bucket_name, conn)
+
+    st.markdown('---')
+
+    st.write("")
+
+    show_kpis(df)
+
+    st.write("")
+
+    st.markdown('---')
+
+    st.markdown('<h1 style="text-align: center;">Ventas Anuales</h1>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns((5,5))
+    with col1:
+        total_sales_kpi = show_sales_kpi(df)
+        st.plotly_chart(total_sales_kpi, use_container_width=True)
+    with col2:
+        yearly_sales_chart = generate_yearly_sales_chart(df)
+        st.plotly_chart(yearly_sales_chart, use_container_width=True)
+
+    st.markdown('---')
+
+    st.markdown('<h1 style="text-align: center;">Ventas Anuales por Comunidad Autónoma</h1>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns((5,5))
+    with col1:
+        yearly_sales_kpi = show_sales_by_region_kpi(df)
+        st.plotly_chart(yearly_sales_kpi, use_container_width=True)
+    with col2:
+        sales_by_region_chart = generate_sales_by_region_chart(df)
+        st.plotly_chart(sales_by_region_chart, use_container_width=True)
+
+    st.markdown('---')
 
     sales_by_region_chart = generate_yearly_sales_cum_chart(df)
     st.plotly_chart(sales_by_region_chart, use_container_width=True)
