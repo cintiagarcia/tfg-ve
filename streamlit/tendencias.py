@@ -1,9 +1,19 @@
 from functools import total_ordering
+import functools
 from pyexpat import model
+from altair import SequentialMultiHue
 import pandas as pd
 import numpy as np
+# from sklearn.base import r2_score
+from sklearn.discriminant_analysis import StandardScaler
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 from statsmodels.tsa.arima.model import ARIMA
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 import matplotlib.pyplot as plt
 import s3fs
 import streamlit as st
@@ -17,6 +27,7 @@ def app():
     # Cargar los datos desde el S3 bucket
     bucket_name = "clean-data-ve-eu-central-1"
 
+    @functools.lru_cache(maxsize=None)
     def read_data_from_s3(bucket_name, conn):
         # Create an S3 file system object
         fs = s3fs.S3FileSystem()
@@ -41,6 +52,7 @@ def app():
     # Cargar los datos
     df = read_data_from_s3(bucket_name, conn)
     
+    @st.cache_data(experimental_allow_widgets=True)
     def predecir_ventas_con_prophet(df, selected_years):
         df_grouped = df.groupby(['año', 'mes'], as_index=False)['total_coches'].sum().reset_index()
         df_grouped['ds'] = pd.to_datetime(df_grouped['año'].astype(str) + '-' + df_grouped['mes'].astype(str) + '-01')
@@ -89,6 +101,7 @@ def app():
     st.dataframe(df_forecast)
     st.markdown('---')
 
+    @st.cache_data(experimental_allow_widgets=True)
     def predecir_ventas_con_prophet_por_comunidad(df, selected_years, selected_comunidad):
         df_filtered = df[df['comunidad_autonoma'] == selected_comunidad]
 
@@ -138,6 +151,7 @@ def app():
     st.subheader('Predicciones de Ventas')
     st.dataframe(df_forecast)
 
+    @st.cache_data(experimental_allow_widgets=True)
     def predecir_ventas_coches_electricos(df, selected_years):
         df_anual = df.groupby('año')['total_coches'].sum().reset_index()
 
@@ -172,7 +186,7 @@ def app():
         return fig
     
     
-
+    @st.cache_data(experimental_allow_widgets=True)
     def predecir_ventas_coches_por_comunidad(df, selected_years_comunidad):
         df_anual = df.groupby(['comunidad_autonoma', 'año'])['total_coches'].sum().reset_index()
 
@@ -248,6 +262,3 @@ def app():
 
 
     st.markdown('---')
-
-    
-    

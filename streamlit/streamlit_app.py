@@ -37,8 +37,14 @@ def do_presentation():
 
         st.markdown('___')
 
-        # logo_path = "streamlit/logo-udima.png"
-        # st.image(logo_path, caption='Universidad a Distancia de Madrid', width=200)
+        st.write('Aqui puede encontrar la arquitectura de alto nivel de la aplicacion VE Predicción')
+        arquitectura_path = "streamlit/arquitectura.png"
+        st.image(arquitectura_path, caption='Arquitectura alto nivel', width=200)
+
+        st.markdown('___')
+
+        logo_path = "streamlit/logo-udima.png"
+        st.image(logo_path, caption='Universidad a Distancia de Madrid', width=200)
 
 
 def do_coches_electricos():
@@ -95,7 +101,7 @@ menu = {
             'action': None, 'item_icon': 'clipboard-data', 'submenu': {
                 'title': None,
                 'items': { 
-                    'Ventas Coches Eléctricos' : {'action': do_coches_electricos, 'item_icon': 'car-front', 'submenu': None},
+                    'Ventas Coches Eléctricos' : {'action': do_coches_electricos, 'item_icon': 'ev-front', 'submenu': None},
                 },
                 'menu_icon': None,
                 'default_index': 0,
