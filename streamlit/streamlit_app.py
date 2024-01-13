@@ -39,7 +39,7 @@ def do_presentation():
 
         st.write('Aqui puede encontrar la arquitectura de alto nivel de la aplicacion VE Predicción')
         arquitectura_path = "streamlit/arquitectura.png"
-        st.image(arquitectura_path, caption='Arquitectura alto nivel', width=200)
+        st.image(arquitectura_path, caption='Arquitectura alto nivel')
 
         st.markdown('___')
 
