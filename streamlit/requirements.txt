@@ -1,9 +1,10 @@
 s3fs
 streamlit_option_menu
 plotly
-scikit-learn
 st-files-connection
 statsmodels
 matplotlib
 prophet
+tensorflow
+scikit-learn
 

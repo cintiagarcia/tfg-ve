@@ -1,3 +1,4 @@
+import functools
 import pandas as pd
 import s3fs
 import streamlit as st
@@ -11,13 +12,14 @@ def app():
     # List all objects in the bucket
     bucket_name = "clean-data-ve-eu-central-1"
 
+    @functools.lru_cache(maxsize=None)
     def read_data_from_s3(bucket_name, conn):
-        # Create an S3 file system object
+        # Crear un objeto de sistema de archivos S3
         fs = s3fs.S3FileSystem()
         file_paths = fs.glob(f"{bucket_name}/*")
         
 
-        # Read the objects and process the data
+        # Leer los objetos y procesar los datos
         data_frames = []
         for file_path in file_paths:
             with fs.open(file_path, "rb") as file:
@@ -25,11 +27,12 @@ def app():
                 df = pd.read_csv(file)
                 data_frames.append(df)
 
-        # Concatenate all data frames
+        # Concatenar todos los marcos de datos
         df = pd.concat(data_frames)
 
         return df
 
+    @st.cache_data
     def generate_yearly_sales_chart(df):
 
         # Calcular el sumatorio de la columna "diferencia_mes_anterior" por año
@@ -47,6 +50,7 @@ def app():
 
         return fig
     
+    @st.cache_data
     def show_sales_kpi(df):
         total_sales = df.groupby('año')['total_coches'].sum().reset_index()
 
@@ -55,6 +59,7 @@ def app():
 
         return fig
 
+    @st.cache_data(experimental_allow_widgets=True)
     def generate_sales_by_region_chart(df):
         unique_years = df["año"].unique()
 
@@ -70,6 +75,7 @@ def app():
 
         return fig
     
+    @st.cache_data(experimental_allow_widgets=True)
     def show_sales_by_region_kpi(df):
         unique_years = df["año"].unique()
 
@@ -88,7 +94,8 @@ def app():
         fig.update_traces(textinfo='percent+label', pull=[0.1] * len(accumulated_per_region))
 
         return fig
-
+    
+    @st.cache_data
     def show_kpis(df):
         total_sales = int(df['total_coches'].sum())
         total_sales_by_year = df.groupby('año')['total_coches'].sum()
@@ -102,7 +109,7 @@ def app():
                 st.markdown('''
                 <div style="border: 2px solid #45a7c8; padding: 10px">
                     <h3 style="text-align: center">Total de ventas</h3>
-                    <p style="text-align: center; font-size: 24px"><strong>{}</strong></p>
+                    <p style="text-align: center; font-size: 24px"><strong>{}</strong> <i class="bi bi-ev-front"></i></p>
                     <br>
                 </div>
                 '''.format('{:,}'.format(total_sales)), unsafe_allow_html=True)
@@ -133,6 +140,7 @@ def app():
                     ''.join('<td style="text-align: center">{:.2f}%</td>'.format(variación) for variación in annual_variation),
                 ), unsafe_allow_html=True)
 
+    @st.cache_data(experimental_allow_widgets=True)
     def generate_yearly_sales_cum_chart(df):
         df['fecha'] = pd.to_datetime(df['año'].astype(str) + '-' + df['mes'].astype(str))
 
@@ -186,6 +194,8 @@ def app():
     with col2:
         sales_by_region_chart = generate_sales_by_region_chart(df)
         st.plotly_chart(sales_by_region_chart, use_container_width=True)
+    
+    st.write("")
 
     st.markdown('---')
 
