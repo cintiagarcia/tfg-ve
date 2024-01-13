@@ -7,4 +7,5 @@ matplotlib
 prophet
 tensorflow
 scikit-learn
+openai
 

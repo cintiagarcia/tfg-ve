@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-import coches_electricos, tendencias
+import coches_electricos, tendencias, chat
 
 st.set_page_config(page_title='VE Price Prediction App', layout='wide')
 
@@ -53,6 +53,9 @@ def do_coches_electricos():
 def do_tendencias():
     tendencias.app()
 
+def do_chat():
+    chat.app()
+
 def display_linkedin_icon():
     linkedin_icon = "https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg"
     linkedin_url = "https://www.linkedin.com/in/cintia-garcia-garces/"
@@ -89,6 +92,7 @@ menu = {
                     'TFG' : {'action': do_presentation, 'item_icon': 'mortarboard', 'submenu': None},
                     'Datos Históricos' : {'action': do_coches_electricos, 'item_icon': 'clipboard-data', 'submenu': None},
                     'Tendencias' : {'action': do_tendencias, 'item_icon': 'bar-chart', 'submenu': None},
+                    'Chat' : {'action': do_chat, 'item_icon': 'chat-left-text', 'submenu': None},
                 },
                 'menu_icon': None,
                 'default_index': 0,
@@ -115,6 +119,19 @@ menu = {
                 'title': None,
                 'items': { 
                     'Predicciones Ventas Coches Eléctricos' : {'action': do_tendencias, 'item_icon': 'graph-up', 'submenu': None},
+                },
+                'menu_icon': None,
+                'default_index': 0,
+                'with_view_panel': 'main',
+                'orientation': 'horizontal',
+                'styles': styles
+            }
+        },
+        'Chat' : {
+            'action': None, 'item_icon': 'chat-left-text', 'submenu': {
+                'title': None,
+                'items': { 
+                    'Chat' : {'action': do_chat, 'item_icon': 'wechat', 'submenu': None},
                 },
                 'menu_icon': None,
                 'default_index': 0,
