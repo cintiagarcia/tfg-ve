@@ -3,26 +3,29 @@ from openai import OpenAI
 import uuid
 import time
 
-client = OpenAI()
-
-# Definir la clave de API de OpenAI
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
-
-# Initialize session state variables
-if "session_id" not in st.session_state:
-    st.session_state.session_id = str(uuid.uuid4())
-
-if "run" not in st.session_state:
-    st.session_state.run = {"status": None}
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-if "retry_error" not in st.session_state:
-    st.session_state.retry_error = 0
 
 def app():
+    client = OpenAI()
+
+    # Definir la clave de API de OpenAI
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+
+    # Initialize session state variables
+    if "session_id" not in st.session_state:
+        st.session_state.session_id = str(uuid.uuid4())
+
+    if "run" not in st.session_state:
+        st.session_state.run = {"status": None}
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    if "retry_error" not in st.session_state:
+        st.session_state.retry_error = 0
+
+    st.sidebar.markdown(st.session_state.session_id)
+
     # Función para generar una respuesta del modelo ChatGPT
     def run_chat_app():
         st.title("VE Asistente")
@@ -88,7 +91,7 @@ def app():
                     else:
                         st.error("Error: OpenAI API esta procesando demasiadas solicitudes. Por favor, intentalo despues ......")
 
-            elif st.session_state.run.status != "completed":
+            elif st.session_state.run.status != "completado":
                 st.session_state.run = client.beta.threads.runs.retrieve(
                     thread_id=st.session_state.thread.id,
                     run_id=st.session_state.run.id,
