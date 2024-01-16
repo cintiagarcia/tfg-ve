@@ -24,8 +24,6 @@ def app():
     if "retry_error" not in st.session_state:
         st.session_state.retry_error = 0
 
-    st.sidebar.markdown(st.session_state.session_id)
-
     # Función para generar una respuesta del modelo ChatGPT
     def run_chat_app():
         st.title("VE Asistente")
